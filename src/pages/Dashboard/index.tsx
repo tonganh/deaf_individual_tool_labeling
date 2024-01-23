@@ -8,10 +8,8 @@ const Dashboard = (props: Props) => {
   return (
     <div>
       <Row style={{ textAlign: "center" }}>
-        <Col span={24}>
-          <b
-            style={{ fontSize: "28px", fontWeight: 600, lineHeight: "42px" }}
-          >
+        {/* <Col span={24}>
+          <b style={{ fontSize: "28px", fontWeight: 600, lineHeight: "42px" }}>
             Trích xuất thông tin tài liệu tự động
           </b>
         </Col>
@@ -27,7 +25,7 @@ const Dashboard = (props: Props) => {
             (Bóc tách và số hoá tốt nhất trên các văn bản hành chính, hóa đơn,
             giấy tờ nói chung)
           </p>
-        </Col>
+        </Col> */}
       </Row>
     </div>
   )

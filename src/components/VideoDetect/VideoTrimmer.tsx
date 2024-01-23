@@ -5,17 +5,32 @@ import ReactHlsPlayer from "react-hls-player"
 import Trimmer from "./Trimmer"
 import { useTimeline } from "../../hooks/useTimeline"
 import React from "react"
+import { DataType, IDataOfEachLabel } from "../../utils/helpers/interface_data"
+
+type ObserverRect = Omit<DOMRectReadOnly, "toJSON">
 interface VideoTrimmerProps {
   streamUrl: string
+  setCurrentDataLabel: React.Dispatch<React.SetStateAction<IDataOfEachLabel>>
+  videoRef: React.RefObject<HTMLVideoElement>
+  rangeValue: [number, number]
+  trimmerRef: React.MutableRefObject<any>
+  trimmerRect: ObserverRect
+  setRangeValue: React.Dispatch<React.SetStateAction<[number, number]>>
+  dataSource: DataType[]
 }
 
-const VideoTrimmer = ({ streamUrl }: VideoTrimmerProps) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
+const VideoTrimmer = ({
+  streamUrl,
+  setCurrentDataLabel,
+  videoRef,
+  rangeValue,
+  trimmerRef,
+  trimmerRect,
+  setRangeValue,
+  dataSource,
+}: VideoTrimmerProps) => {
   const [duration, setDuration] = useState(0)
-  const [rangeValue, setRangeValue] = useState<[number, number]>([0, 0])
-  const [trimmerRef, trimmerRect] = useResizeObserver()
 
-  console.log("🚀 ~ VideoTrimmer ~ trimmerRect.width:", trimmerRect.width)
   const { thumbnailRef, previewRefs } = useTimeline({
     sliderWidth: trimmerRect.width,
   })
@@ -23,13 +38,15 @@ const VideoTrimmer = ({ streamUrl }: VideoTrimmerProps) => {
   const [start, end] = rangeValue
 
   useEffect(() => {
-    console.log("start", start)
-
-    videoRef.current && (videoRef.current.currentTime = start)
+    videoRef.current &&
+      (videoRef.current.currentTime = start) &&
+      setCurrentDataLabel({ start, end })
   }, [start])
 
   useEffect(() => {
-    videoRef.current && (videoRef.current.currentTime = end)
+    videoRef.current &&
+      (videoRef.current.currentTime = end) &&
+      setCurrentDataLabel({ start, end })
   }, [end])
 
   useEffect(() => {
@@ -42,7 +59,7 @@ const VideoTrimmer = ({ streamUrl }: VideoTrimmerProps) => {
   }, [videoRef, setDuration])
 
   return (
-    <Box pos="relative">
+    <div>
       <video
         src={streamUrl}
         autoPlay={false}
@@ -76,7 +93,7 @@ const VideoTrimmer = ({ streamUrl }: VideoTrimmerProps) => {
         previewRefs={previewRefs}
         ref={trimmerRef}
       />
-    </Box>
+    </div>
   )
 }
 

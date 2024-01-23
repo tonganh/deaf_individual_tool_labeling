@@ -13,7 +13,7 @@ interface TrimmerProps extends BoxProps {
 const Trimmer = React.forwardRef<HTMLDivElement, TrimmerProps>(
   ({ previewRefs, duration, value, onChange, ...props }, ref) => {
     return (
-      <Box {...props} ref={ref} pos="relative">
+      <div ref={ref} style={{ position: "relative" }}>
         <Preview
           previewRefs={previewRefs}
           pos="absolute"
@@ -31,7 +31,8 @@ const Trimmer = React.forwardRef<HTMLDivElement, TrimmerProps>(
           w="100%"
           step={0.1}
           max={duration}
-          minRange={1}
+          minRange={0.1}
+          min={0}
           showLabelOnHover={false}
           radius="xs"
           color="indigo"
@@ -39,17 +40,17 @@ const Trimmer = React.forwardRef<HTMLDivElement, TrimmerProps>(
           onChange={onChange}
           label={formatDuration}
           styles={{
-            thumb: { height: 40 },
+            thumb: { height: 40, width: 10 },
             track: {
               "::before": { backgroundColor: "unset" },
             },
             bar: { backgroundColor: "unset" },
           }}
         />
-        <Group sx={{ justifyContent: "end" }}>
-          {/* <Text>{formatDuration(value[1] - value[0])}</Text> */}
-        </Group>
-      </Box>
+        {/* <Group sx={{ justifyContent: "end" }}>
+          <Text>{formatDuration(value[1] - value[0])}</Text>
+        </Group> */}
+      </div>
     )
   },
 )

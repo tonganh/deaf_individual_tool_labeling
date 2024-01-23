@@ -58,7 +58,7 @@ const MainLayout = (props: Props) => {
 
       <Layout.Footer>
         {/* Hisoft VN &copy;{new Date().getFullYear()} */}
-        <div>Copyright©Data Extractor 2023. All rights reserved.</div>
+        <div>Copyright©Deaf individual tool 2023. All rights reserved.</div>
         <div>
           <a href="https://vaipe.org/">https://vaipe.org/</a>
         </div>

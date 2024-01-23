@@ -1,14 +1,5 @@
-import React, { useState, useEffect, useRef } from "react"
-import {
-  Form,
-  Input,
-  Select,
-  Upload,
-  Button,
-  notification,
-  Row,
-  Col,
-} from "antd"
+import React, { useState } from "react"
+import { Row, Col } from "antd"
 
 import "./index.scss"
 
@@ -16,14 +7,20 @@ interface Props {}
 
 import { Box, TextInput } from "@mantine/core"
 import VideoTrimmer from "../../components/VideoDetect/VideoTrimmer"
+import { IDataOfEachLabel } from "../../utils/helpers/interface_data"
+import ResultAndVideo from "../ResultAndVideo"
 
 const FormSelectDocument = (props: Props) => {
   const [streamUrl, setStreamUrl] = useState("")
+  const [currentDataLabel, setCurrentDataLabel] = useState<IDataOfEachLabel>({
+    start: 0,
+    end: 0,
+  })
 
   return (
     <>
-      <Row>
-        <Col span={24}>
+      <Row justify={"center"}>
+        <Col span={12}>
           <TextInput
             label="Stream URL"
             value={streamUrl}
@@ -32,12 +29,7 @@ const FormSelectDocument = (props: Props) => {
           />
         </Col>
       </Row>
-      <Row>
-        <Col span={12}>
-          {streamUrl && <VideoTrimmer streamUrl={streamUrl} />}
-        </Col>
-        <Col span={12}>123123</Col>
-      </Row>
+      <ResultAndVideo streamUrl={streamUrl} />
     </>
   )
 }
