@@ -1,7 +1,4 @@
-import { Box } from "@mantine/core"
-import { useResizeObserver } from "@mantine/hooks"
-import { useEffect, useRef, useState } from "react"
-import ReactHlsPlayer from "react-hls-player"
+import { useEffect } from "react"
 import Trimmer from "./Trimmer"
 import { useTimeline } from "../../hooks/useTimeline"
 import React from "react"
@@ -17,6 +14,9 @@ interface VideoTrimmerProps {
   trimmerRect: ObserverRect
   setRangeValue: React.Dispatch<React.SetStateAction<[number, number]>>
   dataSource: DataType[]
+  duration: number
+  setDuration: React.Dispatch<React.SetStateAction<number>>
+  endtimeOfPreviousLabel: number
 }
 
 const VideoTrimmer = ({
@@ -28,14 +28,37 @@ const VideoTrimmer = ({
   trimmerRect,
   setRangeValue,
   dataSource,
+  duration,
+  setDuration,
+  endtimeOfPreviousLabel,
 }: VideoTrimmerProps) => {
-  const [duration, setDuration] = useState(0)
-
   const { thumbnailRef, previewRefs } = useTimeline({
     sliderWidth: trimmerRect.width,
   })
 
   const [start, end] = rangeValue
+  const videoTest = document.querySelector("video")
+  useEffect(() => {
+    const video = thumbnailRef.current
+
+    if (!video) {
+      return
+    }
+    video.currentTime = start
+  }, [start, end])
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (!videoRef.current) return
+      const { currentTime } = videoRef.current
+      if (currentTime >= end) {
+        videoRef.current.pause()
+      }
+      console.log("End", end)
+    }, 500)
+    // // Cleanup function to clear the interval
+    return () => clearInterval(intervalId)
+  }, [end]) // Empty dependency array ensures this runs once on mount
 
   useEffect(() => {
     videoRef.current &&
@@ -50,8 +73,9 @@ const VideoTrimmer = ({
   }, [end])
 
   useEffect(() => {
-    if (!videoRef.current) return
+    console.log("REload")
 
+    if (!videoRef.current) return
     videoRef.current.onloadedmetadata = () => {
       setDuration(videoRef.current?.duration || 0)
       setRangeValue([0, videoRef.current?.duration || 0])
@@ -62,6 +86,10 @@ const VideoTrimmer = ({
     <div>
       <video
         src={streamUrl}
+        onPlay={() => {
+          console.log("line 89")
+        }}
+        className="video_play_first"
         autoPlay={false}
         controls={false}
         width="100%"
@@ -77,6 +105,12 @@ const VideoTrimmer = ({
         ref={thumbnailRef}
       />
       <video
+        onPlay={() => {
+          console.log("line 107")
+          const { current } = videoRef
+          if (!current) return
+          current.currentTime = start
+        }}
         src={streamUrl}
         autoPlay={false}
         controls
@@ -92,6 +126,7 @@ const VideoTrimmer = ({
         onChange={setRangeValue}
         previewRefs={previewRefs}
         ref={trimmerRef}
+        endtimeOfPreviousLabel={endtimeOfPreviousLabel}
       />
     </div>
   )

@@ -112,6 +112,7 @@ interface Props {
   currentKeyLabel: number
   setCurrentKeyLabel: React.Dispatch<React.SetStateAction<number>>
   setRangeValue: React.Dispatch<React.SetStateAction<[number, number]>>
+  valueGapBetween: number
 }
 const TableDisplayLabel = (props: Props) => {
   const {
@@ -121,6 +122,7 @@ const TableDisplayLabel = (props: Props) => {
     currentKeyLabel,
     setCurrentKeyLabel,
     setRangeValue,
+    valueGapBetween,
   } = props
 
   const [count, setCount] = useState(0)
@@ -151,7 +153,7 @@ const TableDisplayLabel = (props: Props) => {
       editable: false,
       align: "center",
       render: (text: string, record: any) => {
-        return <div onClick={() => handleClickToARow(record)}>{text}</div>
+        return <div onClick={() => handleClickToARow(record)}>Giây {text}</div>
       },
     },
     {
@@ -161,7 +163,7 @@ const TableDisplayLabel = (props: Props) => {
       editable: false,
       align: "center",
       render: (text: string, record: any) => {
-        return <div onClick={() => handleClickToARow(record)}>{text}</div>
+        return <div onClick={() => handleClickToARow(record)}>Giây {text}</div>
       },
     },
     {
@@ -170,9 +172,9 @@ const TableDisplayLabel = (props: Props) => {
       width: "30%",
       editable: true,
       align: "center",
-      // render: (text: string, record: any) => {
-      //   return <div onClick={() => handleClickToARow(record)}>{text}</div>
-      // },
+      render: (text: string, record: any) => {
+        return <div onClick={() => handleClickToARow(record)}>{text}</div>
+      },
     },
     {
       title: "operation",
@@ -191,10 +193,13 @@ const TableDisplayLabel = (props: Props) => {
   ]
 
   const handleAdd = () => {
+    const startValue = dataSource.length
+      ? dataSource[dataSource.length - 1].end
+      : 0
     const newData: DataType = {
       key: count,
-      start: 0,
-      end: 0,
+      start: startValue,
+      end: startValue + valueGapBetween,
       label: "Label...",
     }
     setDataSource([...dataSource, newData])

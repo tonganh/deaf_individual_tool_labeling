@@ -10,25 +10,30 @@ export const useTimeline = ({ sliderWidth }: UseTimelineOptions) => {
     RefObject<HTMLCanvasElement>[]
   >([])
 
+  // const numberFrameWantToShow = 300
+  const numberFrameWantToShow = Math.ceil(sliderWidth / (40 * (16 / 9)))
   useEffect(() => {
-    setPreviewRefs(
-      Array.from(
-        {
-          length: Math.ceil(sliderWidth / (40 * (16 / 9))),
-        },
-        () => React.createRef<HTMLCanvasElement>(),
-      ),
-    )
+    if (sliderWidth === 0 || previewRefs.length === 0) {
+      setPreviewRefs(
+        Array.from(
+          {
+            length: numberFrameWantToShow,
+          },
+          () => React.createRef<HTMLCanvasElement>(),
+        ),
+      )
+    }
   }, [sliderWidth, setPreviewRefs])
 
   useEffect(() => {
     if (!thumbnailRef.current) return
 
     thumbnailRef.current.onloadedmetadata = () => {
-      const numPreviews = Math.ceil(sliderWidth / (40 * (16 / 9)))
+      const numPreviews = numberFrameWantToShow
 
       const drawTimeline = async () => {
         for (let i = 0; i < previewRefs.length; i++) {
+          if (!thumbnailRef.current) return
           const seekedPromise = new Promise<void>((resolve) => {
             const onSeeked = () => {
               const ref = previewRefs[i]

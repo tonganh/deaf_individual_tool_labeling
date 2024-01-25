@@ -1,0 +1,11 @@
+.mantine-Slider-track>.mantine-Slider-thumb:nth-child(2) {
+    background-color: red;
+    border: 0.25rem solid red;
+    /* Example property for the first thumb */
+}
+
+.mantine-Slider-track>.mantine-Slider-thumb:nth-child(3) {
+    background-color: blue;
+    // border: 0.25rem solid red;
+    /* Example property for the second thumb */
+}

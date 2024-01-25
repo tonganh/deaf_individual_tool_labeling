@@ -5,18 +5,22 @@ import "./index.scss"
 
 interface Props {}
 
-import { Box, TextInput } from "@mantine/core"
-import VideoTrimmer from "../../components/VideoDetect/VideoTrimmer"
-import { IDataOfEachLabel } from "../../utils/helpers/interface_data"
+import { TextInput } from "@mantine/core"
 import ResultAndVideo from "../ResultAndVideo"
 
 const FormSelectDocument = (props: Props) => {
   const [streamUrl, setStreamUrl] = useState("")
-  const [currentDataLabel, setCurrentDataLabel] = useState<IDataOfEachLabel>({
-    start: 0,
-    end: 0,
-  })
-
+  const runAfterDelay = (url: string) => {
+    setStreamUrl(url)
+    setTimeout(() => {
+      // Your code here
+      setStreamUrl("")
+    }, 4)
+    setTimeout(() => {
+      // Your code here
+      setStreamUrl(url)
+    }, 4)
+  }
   return (
     <>
       <Row justify={"center"}>
@@ -24,7 +28,7 @@ const FormSelectDocument = (props: Props) => {
           <TextInput
             label="Stream URL"
             value={streamUrl}
-            onChange={(e) => setStreamUrl(e.target.value)}
+            onChange={(e) => runAfterDelay(e.currentTarget.value)}
             mb="md"
           />
         </Col>

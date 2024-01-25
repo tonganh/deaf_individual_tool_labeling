@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState } from "react"
 import VideoTrimmer from "../../components/VideoDetect/VideoTrimmer"
 import { DataType, IDataOfEachLabel } from "../../utils/helpers/interface_data"
 import { useResizeObserver } from "@mantine/hooks"
-import { useTimeline } from "../../hooks/useTimeline"
 import TableDisplayLabel from "../../components/LabelingData/TableDisplayLabel"
 interface Props {
   streamUrl: string
@@ -12,10 +11,14 @@ const ResultAndVideo = (props: Props) => {
   const { streamUrl } = props
   const [currentDataLabel, setCurrentDataLabel] = useState<IDataOfEachLabel>({
     start: 0,
-    end: 0,
-    // label: "",
+    end: 2,
   })
+
+  const [duration, setDuration] = useState(0)
   const [currentKeyLabel, setCurrentKeyLabel] = useState<number>(-1)
+  const [endtimeOfPreviousLabel, setEndtimeOfPreviousLabel] =
+    useState<number>(0)
+  const [valueGapBetween, setValueGapBetween] = useState<number>(0)
   const [dataSource, setDataSource] = useState<DataType[]>([])
   const videoRef = useRef<HTMLVideoElement>(null)
   const [rangeValue, setRangeValue] = useState<[number, number]>([0, 0])
@@ -30,18 +33,12 @@ const ResultAndVideo = (props: Props) => {
       }
       return item
     })
-    console.log("🚀 ~ handleEdit ~ newData:", newData)
     setDataSource(newData)
   }
 
-  // useEffect(() => {
-  //   if (dataSource.length > 0 && dataSource[currentKeyLabel] !== undefined) {
-  //     setCurrentDataLabel({
-  //       start: dataSource[currentKeyLabel].start,
-  //       end: dataSource[currentKeyLabel].end,
-  //     })
-  //   }
-  // }, [dataSource])
+  useEffect(() => {
+    setValueGapBetween(duration / 100)
+  }, [duration])
 
   useEffect(() => {
     if (currentKeyLabel !== -1) {
@@ -49,15 +46,20 @@ const ResultAndVideo = (props: Props) => {
         key: currentKeyLabel,
         start: currentDataLabel.start,
         end: currentDataLabel.end,
-        // label: currentDataLabel.label,
       }
       handleEdit(currentKeyLabel, newRecord)
     }
   }, [currentDataLabel])
 
+  useEffect(() => {
+    if (currentKeyLabel !== -1 && currentKeyLabel !== -0) {
+      setEndtimeOfPreviousLabel(dataSource[currentKeyLabel - 1].end)
+    }
+  }, [currentKeyLabel])
+
   return (
     <Row>
-      <Col span={15} style={{ position: "relative" }}>
+      <Col span={15} style={{ position: "relative", marginLeft: "20px" }}>
         {streamUrl && (
           <VideoTrimmer
             streamUrl={streamUrl}
@@ -68,10 +70,13 @@ const ResultAndVideo = (props: Props) => {
             trimmerRect={trimmerRect}
             setRangeValue={setRangeValue}
             dataSource={dataSource}
+            duration={duration}
+            setDuration={setDuration}
+            endtimeOfPreviousLabel={endtimeOfPreviousLabel}
           />
         )}
       </Col>
-      <Col span={9}>
+      <Col span={8}>
         <TableDisplayLabel
           setCurrentDataLabel={setCurrentDataLabel}
           dataSource={dataSource}
@@ -79,6 +84,7 @@ const ResultAndVideo = (props: Props) => {
           currentKeyLabel={currentKeyLabel}
           setCurrentKeyLabel={setCurrentKeyLabel}
           setRangeValue={setRangeValue}
+          valueGapBetween={valueGapBetween}
         />
       </Col>
     </Row>

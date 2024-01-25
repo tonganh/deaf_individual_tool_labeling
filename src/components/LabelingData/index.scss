@@ -1,3 +1,12 @@
 .red-row {
   background-color: red;
 }
+
+.red-row:hover {
+  background-color: red;
+}
+
+
+.editable-row .ant-table-cell-row-hover {
+  background-color: red !important;
+}
